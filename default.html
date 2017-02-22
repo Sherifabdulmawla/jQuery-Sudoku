@@ -1,0 +1,152 @@
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Sudoku</title>
+	<link href="style.css" rel="stylesheet" type="text/css">
+	<script src="jquery-3.1.1.js"></script>
+	<script>
+		$(function(){ //Starting Loading --------------------------------------------------------------------------------------------------
+			
+			$("#timer").text("2 : 00") //Initializations for Countdown Timer
+			 var min = 1;
+			 var sec = 59;
+			 var intervalId=setInterval(function(){ //Starting Countdown Timer -------------------------
+				 $("#timer").text(min +" : "+sec);
+				 sec--;
+				 
+				 if(sec==-1)
+				 {
+					 if(min==0){
+						clearInterval(intervalId);
+						if(confirm("TIMEOUT! You Lost \n\nDo you want to play again?")){
+								document.location.reload(true);
+							}
+							else{
+								window.close();
+							}
+					 }
+					 else{
+						 min--;
+						 sec = 59;
+					 }
+				 }
+			  },1000); //Ending Countdown Timer	--------------------------------------------------------
+			
+			var valArr=[1,2,3,4];
+			var indxArr=[4,2,3,1];
+			
+			valArr.sort(function(){
+				return 0.73 - Math.random() 
+			});
+			
+			indxArr.sort(function(){
+				return 0.73 - Math.random() 
+			});
+			
+			for(var i=0; i<4; i++){
+			var j=indxArr[i];
+			$("tr:nth-child("+j+")>td:nth-child("+(i+1)+")").addClass("preSet");
+			$("tr:nth-child("+j+")>td:nth-child("+(i+1)+")").text(""+valArr[i]+"");
+			}; //end of shuffling and setting random cells
+			
+			function cellPicker(row,col){  // Declaring a function for selecting cells -----------------
+				return $("tr:nth-Child("+row+")>td:nth-Child("+col+")")
+			} //ending cellPicker function -------------------------------------------------------------
+			
+			function checkState(){ //Declaring a function for checking user answers --------------------
+				var rows = [];
+				$('tr').each(function(){
+					var cellSum = 0;
+					$(this).children().each(function(){
+						var val=$(this).text();
+						var sibs=$($(this).siblings());
+						if(val!=$(sibs[0]).text()&&val!=$(sibs[1]).text()){
+							cellSum+=parseInt(val);
+						}
+					});
+					rows.push(cellSum);
+				});
+				var cols = [];
+				for( var i = 1; i <= 4; i++) {
+					var cellSum = 0;
+					$('tr > td:nth-Child('+i+')').each(function(){
+						var val=$(this).text();
+						var colSibs=$($('tr ~ tr > td:nth-Child(2)'));
+							cellSum += parseInt(val);
+					});
+					cols.push(cellSum);
+				};
+				$.merge(rows,cols);
+				if(rows.every((val)=>val==10)){
+					if(confirm("YOU WON \nDo you want to play again?")){
+						document.location.reload(true);
+					}
+					else{
+						window.close();
+					}
+				}
+			} //ending checkState function ------------------------------------------------------------
+			
+			var row=1,col=1;
+			cellPicker(row,col).addClass("selected");
+			
+			$("body").on("keydown",function(e){ // Declaring keyboard handler function ----------------
+				cellPicker(row,col).removeClass("selected");
+				switch (e.which){
+					case 37: //Arrow Left
+						(col==1?col=4:col--);
+						break;
+					case 39: //Arrow Right
+						(col==4?col=1:col++);
+						break;
+					case 38: //Arrow Up
+						(row==1?row=4:row--);
+						break;
+					case 40: //Arrow Down
+						(row==4?row=1:row++)
+						break;
+					default:
+						if(e.which>=97&&e.which<=100&&!cellPicker(row,col).hasClass( "preSet" )){
+							cellPicker(row,col).text(e.key);
+							checkState();
+						}
+				}
+				cellPicker(row,col).addClass("selected");
+			}); //ending keyboard events handling -----------------------------------------------------
+			
+		}); //ending loading
+
+	</script>
+</head>
+<body>
+	<div>
+		<p id="timer"></p>
+		<table>
+			<tr>
+			  <td></td>
+			  <td class="col2"></td>
+			  <td class="col3"></td>
+			  <td></td>
+			</tr>
+			<tr>
+			  <td class="row2"></td>
+			  <td class="row2 col2" ></td>
+			  <td class="row2 col3"></td>
+			  <td class="row2"></td>
+			</tr>
+			<tr>
+			  <td class="row3"></td>
+			  <td class="col2 row3"></td>
+			  <td class="row3 col3"></td>
+			  <td class="row3"></td>
+			</tr>
+			<tr>
+			  <td></td>
+			  <td class="col2"></td>
+			  <td></td>
+			  <td class="col3"></td>
+			</tr>
+		</tabl
+	</div>
+</body>
+</html>
